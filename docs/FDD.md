@@ -173,7 +173,7 @@ stateDiagram-v2
 
 ### 5.1 Criação do evento na outbox
 
-**FDD-FLUXO-01.** `changeStatus` chama `publishWebhookEvent(tx, order, from, to)` logo depois de gravar `orderStatusHistory`, dentro do mesmo `$transaction` ([09:41] Bruno, [09:41] Diego). A função fica em `src/modules/webhooks/webhook.service.ts` (novo, a criar) como função exportada, sem injeção no `OrderService` (derivado de [09:41] Diego).
+**FDD-FLUXO-01**. `changeStatus` chama `publishWebhookEvent(tx, order, from, to)` logo depois de gravar `orderStatusHistory`, dentro do mesmo `$transaction` ([09:41] Bruno, [09:41] Diego). A função fica em `src/modules/webhooks/webhook.service.ts` (novo, a criar) como função exportada, sem injeção no `OrderService` (derivado de [09:41] Diego).
 
 ```mermaid
 sequenceDiagram
@@ -206,7 +206,7 @@ O tamanho do payload **não** é validado aqui: um erro nesse ponto desfaria a m
 
 ### 5.2 Processamento pelo worker
 
-**FDD-FLUXO-02.** Processo separado iniciado por `npm run worker`, com entry em `src/worker.ts` (novo, a criar) e lógica em `src/modules/webhooks/webhook.worker.ts` (novo, a criar) ([09:11] Larissa, [09:28] Bruno). O worker cria seu PrismaClient com `createPrismaClient()` (`src/config/database.ts`) na mesma `DATABASE_URL` ([09:30] Bruno).
+**FDD-FLUXO-02**. Processo separado iniciado por `npm run worker`, com entry em `src/worker.ts` (novo, a criar) e lógica em `src/modules/webhooks/webhook.worker.ts` (novo, a criar) ([09:11] Larissa, [09:28] Bruno). O worker cria seu PrismaClient com `createPrismaClient()` (`src/config/database.ts`) na mesma `DATABASE_URL` ([09:30] Bruno).
 
 ```mermaid
 sequenceDiagram
@@ -239,7 +239,7 @@ sequenceDiagram
 
 ### 5.3 Retry com backoff
 
-**FDD-FLUXO-03.** A cada falha retryable, `attempts` é incrementado e `nextAttemptAt` recebe o próximo intervalo da tabela. Interpretação: o envio original mais 5 retentativas, o que fecha "quase 15 horas entre primeira falha e última tentativa" ([09:17] Diego) (pendente de confirmação, ver RFC-Q-08).
+**FDD-FLUXO-03**. A cada falha retryable, `attempts` é incrementado e `nextAttemptAt` recebe o próximo intervalo da tabela. Interpretação: o envio original mais 5 retentativas, o que fecha "quase 15 horas entre primeira falha e última tentativa" ([09:17] Diego) (pendente de confirmação, ver RFC-Q-08).
 
 | Envio | Quando | Intervalo desde o envio anterior | Fonte |
 |---|---|---|---|
@@ -254,7 +254,7 @@ Se o envio 6 falhar, o evento segue para 5.4 com motivo `WEBHOOK_RETRIES_EXHAUST
 
 ### 5.4 DLQ e replay manual
 
-**FDD-FLUXO-04.** Movimento para a dead letter, em uma transação: insere em `webhook_dead_letter` (`eventId` = id da outbox, payload, `reason`, `lastError`, `attempts`, `failedAt`) e remove a linha da outbox ([09:18] Diego) (remoção derivada). O worker registra o log `webhook_event_dead_lettered` com o `deadLetterId`, que é como o ADMIN obtém o id para o replay, já que a reunião não pediu listagem da dead letter (derivado).
+**FDD-FLUXO-04**. Movimento para a dead letter, em uma transação: insere em `webhook_dead_letter` (`eventId` = id da outbox, payload, `reason`, `lastError`, `attempts`, `failedAt`) e remove a linha da outbox ([09:18] Diego) (remoção derivada). O worker registra o log `webhook_event_dead_lettered` com o `deadLetterId`, que é como o ADMIN obtém o id para o replay, já que a reunião não pediu listagem da dead letter (derivado).
 
 ```mermaid
 sequenceDiagram
@@ -278,7 +278,7 @@ sequenceDiagram
 
 ### 5.5 Gestão de secret e rotação
 
-**FDD-FLUXO-05.**
+**FDD-FLUXO-05**.
 
 - **Geração:** na criação, a plataforma gera a secret com `crypto.randomBytes(32)` em hexadecimal (64 caracteres) e a devolve uma única vez ([09:31] Marcos) (algoritmo e tamanho derivados).
 - **Rotação:** gera nova secret, move a atual para `previousSecret` com `previousSecretExpiresAt = agora + 24h` e devolve a nova ([09:21] Sofia). Uma nova rotação durante a convivência descarta a secret anterior imediatamente (derivado).
@@ -295,7 +295,7 @@ Sobre o `customerId`: proposta de `customerId` no **body** na criação e na **q
 
 ### 6.1 Criar webhook
 
-**FDD-CONTRATO-01.** `POST /api/v1/webhooks` | auth: qualquer role | fonte: [09:31] Marcos, [09:33] Marcos.
+**FDD-CONTRATO-01**. `POST /api/v1/webhooks` | auth: qualquer role | fonte: [09:31] Marcos, [09:33] Marcos.
 
 Regras do body: `url` com protocolo `https:` ([09:23] Sofia); `events` com 1 ou mais status distintos entre `PAID`, `PROCESSING`, `SHIPPED`, `DELIVERED`, `CANCELLED`. `PENDING` fica de fora porque nenhuma transição leva a ele (`src/modules/orders/order.status.ts`) e a criação do pedido não gera evento (derivado, ver RFC-Q-12).
 
@@ -336,7 +336,7 @@ Erros: `400` (URL http ou corpo inválido), `401`, `404 NOT_FOUND` (customer ine
 
 ### 6.2 Listar webhooks do customer
 
-**FDD-CONTRATO-02.** `GET /api/v1/webhooks?customerId=<uuid>&page=1&pageSize=20` | auth: qualquer role | fonte: [09:33] Bruno. `customerId` obrigatório (pendente de confirmação, ver RFC-Q-01); paginação no formato de `paginated()` (`src/shared/http/response.ts`).
+**FDD-CONTRATO-02**. `GET /api/v1/webhooks?customerId=<uuid>&page=1&pageSize=20` | auth: qualquer role | fonte: [09:33] Bruno. `customerId` obrigatório (pendente de confirmação, ver RFC-Q-01); paginação no formato de `paginated()` (`src/shared/http/response.ts`).
 
 Resposta `200 OK`:
 
@@ -361,7 +361,7 @@ Erros: `400 VALIDATION_ERROR` (sem `customerId` ou UUID inválido), `401`.
 
 ### 6.3 Editar webhook
 
-**FDD-CONTRATO-03.** `PATCH /api/v1/webhooks/:id` | auth: qualquer role | fonte: [09:33] Bruno. Campos opcionais: `url`, `events`, `active` ([09:21] Bruno). A secret não é editável por aqui. Alterações não afetam eventos já enfileirados, que guardam snapshot ([09:52] Larissa) (derivado).
+**FDD-CONTRATO-03**. `PATCH /api/v1/webhooks/:id` | auth: qualquer role | fonte: [09:33] Bruno. Campos opcionais: `url`, `events`, `active` ([09:21] Bruno). A secret não é editável por aqui. Alterações não afetam eventos já enfileirados, que guardam snapshot ([09:52] Larissa) (derivado).
 
 ```json
 { "events": ["PAID", "SHIPPED", "DELIVERED"], "active": false }
@@ -385,7 +385,7 @@ Erros: `400`, `401`, `404 WEBHOOK_NOT_FOUND`.
 
 ### 6.4 Remover webhook
 
-**FDD-CONTRATO-04.** `DELETE /api/v1/webhooks/:id` | auth: qualquer role | fonte: [09:33] Bruno. Resposta `204 No Content`, sem corpo. Os eventos ainda pendentes desse endpoint e o histórico dele são **descartados** em cascata, sem ir para a dead letter: o cliente pediu para não receber mais nada naquela URL (derivado). Para pausar sem perder eventos, o caminho é `PATCH` com `active: false`, que manda os pendentes para a dead letter (5.2).
+**FDD-CONTRATO-04**. `DELETE /api/v1/webhooks/:id` | auth: qualquer role | fonte: [09:33] Bruno. Resposta `204 No Content`, sem corpo. Os eventos ainda pendentes desse endpoint e o histórico dele são **descartados** em cascata, sem ir para a dead letter: o cliente pediu para não receber mais nada naquela URL (derivado). Para pausar sem perder eventos, o caminho é `PATCH` com `active: false`, que manda os pendentes para a dead letter (5.2).
 
 Erro `404`:
 
@@ -395,7 +395,7 @@ Erro `404`:
 
 ### 6.5 Rotacionar secret
 
-**FDD-CONTRATO-05.** `POST /api/v1/webhooks/:id/rotate-secret` (rota derivada; a reunião definiu só a capacidade, [09:21] Sofia) | auth: qualquer role, como o resto do CRUD ([09:37] Sofia). Sem corpo de request.
+**FDD-CONTRATO-05**. `POST /api/v1/webhooks/:id/rotate-secret` (rota derivada; a reunião definiu só a capacidade, [09:21] Sofia) | auth: qualquer role, como o resto do CRUD ([09:37] Sofia). Sem corpo de request.
 
 Resposta `200 OK` (única resposta, além da criação, que traz a secret):
 
@@ -411,7 +411,7 @@ Erros: `401`, `404 WEBHOOK_NOT_FOUND`.
 
 ### 6.6 Histórico de entregas
 
-**FDD-CONTRATO-06.** `GET /api/v1/webhooks/:id/deliveries` | auth: qualquer role | fonte: [09:34] Marcos, [09:35] Larissa. Retorna os **últimos 100** envios, do mais recente para o mais antigo ([09:34] Marcos), com sucesso ou falha, payload, response e tempo de resposta. Cada tentativa conta como um envio, inclusive os retries (derivado).
+**FDD-CONTRATO-06**. `GET /api/v1/webhooks/:id/deliveries` | auth: qualquer role | fonte: [09:34] Marcos, [09:35] Larissa. Retorna os **últimos 100** envios, do mais recente para o mais antigo ([09:34] Marcos), com sucesso ou falha, payload, response e tempo de resposta. Cada tentativa conta como um envio, inclusive os retries (derivado).
 
 Resposta `200 OK`:
 
@@ -450,7 +450,7 @@ O `requestPayload` aparece abreviado no exemplo; na resposta real ele é o paylo
 
 ### 6.7 Replay de evento da dead letter
 
-**FDD-CONTRATO-07.** `POST /api/v1/admin/webhooks/dead-letter/:id/replay` | auth: **ADMIN** via `requireRole('ADMIN')` | fonte: [09:18] Diego, [09:35] Diego, [09:36] Sofia. Sem corpo de request.
+**FDD-CONTRATO-07**. `POST /api/v1/admin/webhooks/dead-letter/:id/replay` | auth: **ADMIN** via `requireRole('ADMIN')` | fonte: [09:18] Diego, [09:35] Diego, [09:36] Sofia. Sem corpo de request.
 
 Resposta `200 OK`:
 
@@ -474,7 +474,7 @@ Outros erros: `401`, `404 WEBHOOK_DEAD_LETTER_NOT_FOUND`, `409 WEBHOOK_ALREADY_R
 
 ### 6.8 Webhook de saída (plataforma → cliente)
 
-**FDD-CONTRATO-08.** `POST <url cadastrada>` (método derivado) | fonte: [09:43] Diego, [09:44] Diego, [09:44] Sofia, [09:45] Diego.
+**FDD-CONTRATO-08**. `POST <url cadastrada>` (método derivado) | fonte: [09:43] Diego, [09:44] Diego, [09:44] Sofia, [09:45] Diego.
 
 | Header | Valor | Fonte |
 |---|---|---|
@@ -553,7 +553,7 @@ O projeto hoje só tem logs Pino (`src/shared/logger/index.ts`) e correlação p
 
 ### Logs
 
-**FDD-OBS-02.** Pino, sem logger novo ([09:29] Bruno), com campos estruturados e `eventId` em todos os eventos do worker (nomes derivados, no estilo `http_request` e `server_started` do código atual):
+**FDD-OBS-02**. Pino, sem logger novo ([09:29] Bruno), com campos estruturados e `eventId` em todos os eventos do worker (nomes derivados, no estilo `http_request` e `server_started` do código atual):
 
 | Evento | Nível | Campos | Fonte |
 |---|---|---|---|
@@ -564,7 +564,7 @@ O projeto hoje só tem logs Pino (`src/shared/logger/index.ts`) e correlação p
 | `webhook_secret_rotated` | info | `webhookEndpointId`, `userId` (nunca a secret) | (derivado de [09:21] Sofia) |
 | `webhook_worker_started` / `webhook_worker_stopped` | info | `pollIntervalMs`, `batchSize` / `signal` | (derivado) |
 
-**FDD-OBS-03.** Redact: incluir `*.secret`, `*.previousSecret` e `req.body.secret` em `redactPaths` (derivado de [09:22] Diego). O log de auditoria do replay é o registro de "quem fez o replay" exigido por [09:36] Sofia, junto com `replayedById` na tabela.
+**FDD-OBS-03**. Redact: incluir `*.secret`, `*.previousSecret` e `req.body.secret` em `redactPaths` (derivado de [09:22] Diego). O log de auditoria do replay é o registro de "quem fez o replay" exigido por [09:36] Sofia, junto com `replayedById` na tabela.
 
 ### Tracing
 
