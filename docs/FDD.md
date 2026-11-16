@@ -299,6 +299,14 @@ Sobre o `customerId`: proposta de `customerId` no **body** na criação e na **q
 
 Regras do body: `url` com protocolo `https:` ([09:23] Sofia); `events` com 1 ou mais status distintos entre `PAID`, `PROCESSING`, `SHIPPED`, `DELIVERED`, `CANCELLED`. `PENDING` fica de fora porque nenhuma transição leva a ele (`src/modules/orders/order.status.ts`) e a criação do pedido não gera evento (derivado, ver RFC-Q-12).
 
+Exemplo de requisição:
+
+```http
+POST /api/v1/webhooks HTTP/1.1
+Authorization: Bearer <jwt do operador>
+Content-Type: application/json
+```
+
 ```json
 {
   "customerId": "6f1c2a9e-3b7d-4c11-9a51-2f0e8d4b7a10",
@@ -338,6 +346,13 @@ Erros: `400` (URL http ou corpo inválido), `401`, `404 NOT_FOUND` (customer ine
 
 **FDD-CONTRATO-02**. `GET /api/v1/webhooks?customerId=<uuid>&page=1&pageSize=20` | auth: qualquer role | fonte: [09:33] Bruno. `customerId` obrigatório (pendente de confirmação, ver RFC-Q-01); paginação no formato de `paginated()` (`src/shared/http/response.ts`).
 
+Exemplo de requisição (sem corpo):
+
+```http
+GET /api/v1/webhooks?customerId=6f1c2a9e-3b7d-4c11-9a51-2f0e8d4b7a10&page=1&pageSize=20 HTTP/1.1
+Authorization: Bearer <jwt do operador>
+```
+
 Resposta `200 OK`:
 
 ```json
@@ -363,6 +378,14 @@ Erros: `400 VALIDATION_ERROR` (sem `customerId` ou UUID inválido), `401`.
 
 **FDD-CONTRATO-03**. `PATCH /api/v1/webhooks/:id` | auth: qualquer role | fonte: [09:33] Bruno. Campos opcionais: `url`, `events`, `active` ([09:21] Bruno). A secret não é editável por aqui. Alterações não afetam eventos já enfileirados, que guardam snapshot ([09:52] Larissa) (derivado).
 
+Exemplo de requisição:
+
+```http
+PATCH /api/v1/webhooks/0b7e4f52-9d1a-4c3e-8f6b-5a2d9c1e7f33 HTTP/1.1
+Authorization: Bearer <jwt do operador>
+Content-Type: application/json
+```
+
 ```json
 { "events": ["PAID", "SHIPPED", "DELIVERED"], "active": false }
 ```
@@ -387,6 +410,17 @@ Erros: `400`, `401`, `404 WEBHOOK_NOT_FOUND`.
 
 **FDD-CONTRATO-04**. `DELETE /api/v1/webhooks/:id` | auth: qualquer role | fonte: [09:33] Bruno. Resposta `204 No Content`, sem corpo. Os eventos ainda pendentes desse endpoint e o histórico dele são **descartados** em cascata, sem ir para a dead letter: o cliente pediu para não receber mais nada naquela URL (derivado). Para pausar sem perder eventos, o caminho é `PATCH` com `active: false`, que manda os pendentes para a dead letter (5.2).
 
+Exemplo de requisição (sem corpo) e resposta de sucesso:
+
+```http
+DELETE /api/v1/webhooks/0b7e4f52-9d1a-4c3e-8f6b-5a2d9c1e7f33 HTTP/1.1
+Authorization: Bearer <jwt do operador>
+```
+
+```http
+HTTP/1.1 204 No Content
+```
+
 Erro `404`:
 
 ```json
@@ -396,6 +430,13 @@ Erro `404`:
 ### 6.5 Rotacionar secret
 
 **FDD-CONTRATO-05**. `POST /api/v1/webhooks/:id/rotate-secret` (rota derivada; a reunião definiu só a capacidade, [09:21] Sofia) | auth: qualquer role, como o resto do CRUD ([09:37] Sofia). Sem corpo de request.
+
+Exemplo de requisição:
+
+```http
+POST /api/v1/webhooks/0b7e4f52-9d1a-4c3e-8f6b-5a2d9c1e7f33/rotate-secret HTTP/1.1
+Authorization: Bearer <jwt do operador>
+```
 
 Resposta `200 OK` (única resposta, além da criação, que traz a secret):
 
@@ -412,6 +453,13 @@ Erros: `401`, `404 WEBHOOK_NOT_FOUND`.
 ### 6.6 Histórico de entregas
 
 **FDD-CONTRATO-06**. `GET /api/v1/webhooks/:id/deliveries` | auth: qualquer role | fonte: [09:34] Marcos, [09:35] Larissa. Retorna os **últimos 100** envios, do mais recente para o mais antigo ([09:34] Marcos), com sucesso ou falha, payload, response e tempo de resposta. Cada tentativa conta como um envio, inclusive os retries (derivado).
+
+Exemplo de requisição (sem corpo):
+
+```http
+GET /api/v1/webhooks/0b7e4f52-9d1a-4c3e-8f6b-5a2d9c1e7f33/deliveries HTTP/1.1
+Authorization: Bearer <jwt do operador>
+```
 
 Resposta `200 OK`:
 
@@ -451,6 +499,13 @@ O `requestPayload` aparece abreviado no exemplo; na resposta real ele é o paylo
 ### 6.7 Replay de evento da dead letter
 
 **FDD-CONTRATO-07**. `POST /api/v1/admin/webhooks/dead-letter/:id/replay` | auth: **ADMIN** via `requireRole('ADMIN')` | fonte: [09:18] Diego, [09:35] Diego, [09:36] Sofia. Sem corpo de request.
+
+Exemplo de requisição (o token precisa ser de um usuário com role `ADMIN`):
+
+```http
+POST /api/v1/admin/webhooks/dead-letter/e4f6a8b0-2c4d-4e6f-8a0b-2c4d6e8f0a1b/replay HTTP/1.1
+Authorization: Bearer <jwt de ADMIN>
+```
 
 Resposta `200 OK`:
 
@@ -498,6 +553,29 @@ Corpo, enxuto e sem items ([09:43] Diego, [09:44] Bruno):
   "customer_id": "6f1c2a9e-3b7d-4c11-9a51-2f0e8d4b7a10",
   "total_cents": 18500
 }
+```
+
+Exemplo de requisição completa, como chega ao cliente (o corpo é o JSON acima, serializado):
+
+```http
+POST /webhooks/orders HTTP/1.1
+Host: erp.atlas.example
+Content-Type: application/json
+X-Event-Id: 7d9b1f3e-5a7c-4e9b-8d1f-3a5c7e9b1d3f
+X-Webhook-Id: 0b7e4f52-9d1a-4c3e-8f6b-5a2d9c1e7f33
+X-Timestamp: 2026-11-16T12:00:02.000Z
+X-Signature: sha256=<HMAC-SHA256 do corpo bruto, em hexadecimal>
+
+{"event_id":"7d9b1f3e-5a7c-4e9b-8d1f-3a5c7e9b1d3f","event_type":"order.status_changed", ...}
+```
+
+Exemplo de resposta do cliente que confirma a entrega. O corpo é livre e só é guardado no histórico (6.6), limitado por `WEBHOOK_RESPONSE_BODY_MAX_BYTES` (derivado):
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{"received":true}
 ```
 
 Semântica da resposta do cliente: qualquer `2xx` confirma a entrega; outro status, ausência de resposta em 10s ([09:42] Diego) ou erro de rede contam como falha e seguem para retry (derivado para "não 2xx"). O cliente deve validar `X-Signature` com o corpo bruto e deduplicar por `X-Event-Id` ([09:25] Diego); essa orientação vai para o portal do desenvolvedor ([09:26] Marcos). `X-Timestamp` não entra no conteúdo assinado nesta versão (pendente de confirmação, ver RFC-Q-06).
