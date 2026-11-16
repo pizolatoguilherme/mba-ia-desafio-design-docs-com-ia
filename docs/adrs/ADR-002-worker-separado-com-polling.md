@@ -62,7 +62,7 @@ Há ainda a questão de ordem: se um pedido muda de PAID para PROCESSING e depoi
 - O polling consulta o banco a cada 2 segundos mesmo sem eventos pendentes (derivado de [09:09] Diego).
 - O throughput fica limitado a um worker; um cliente lento (até o timeout de 10 segundos, [09:42] Diego) atrasa a fila inteira (derivado).
 - Se o único worker parar, nada é entregue até ele voltar; os eventos ficam pendentes na outbox e não se perdem (derivado de [09:06] Diego).
-- Ponto em aberto: escala para múltiplos workers (particionar por `order_id` ou lock pessimista, [09:13] Diego); registrado como questão em aberto no RFC.
+- Ponto em aberto: escala para múltiplos workers (particionar por `order_id` ou lock pessimista, [09:13] Diego); ver [RFC-Q-03](../RFC.md#questões-em-aberto).
 
 ### Trade-off
 Ganhamos simplicidade operacional, isolamento do ciclo de vida da API e ordem por pedido, ao custo de 2 segundos de latência mínima, um processo extra e throughput limitado a um único worker.

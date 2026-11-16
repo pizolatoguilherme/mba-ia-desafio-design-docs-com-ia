@@ -7,7 +7,7 @@ Este diretório armazena os ADRs (Architectural Decision Records) do Sistema de 
 - Um arquivo por decisão, nomeado `ADR-NNN-titulo-em-kebab-case.md` (substitui a convenção antiga `0001-titulo-da-decisao.md`).
 - Numeração sequencial de três dígitos; números não são reaproveitados.
 - Seções: Status, Contexto, Drivers da decisão, Decisão, Alternativas Consideradas, Consequências (Positivas, Negativas, Trade-off), Referências e ADRs relacionados.
-- Lacunas que a reunião não fechou aparecem como "Ponto em aberto" dentro de Consequências e são tratadas nas questões em aberto do RFC.
+- Lacunas que a reunião não fechou aparecem como "Ponto em aberto" dentro de Consequências e apontam para o `RFC-Q` correspondente no [RFC](../RFC.md#questões-em-aberto).
 
 ## Índice
 

@@ -54,7 +54,7 @@ O time é pequeno ([09:07] Diego) e a estimativa total é de três sprints ([09:
 ### Negativas
 - O módulo herda as limitações dos padrões atuais: não há métrica nem tracing no projeto hoje, só logs; as dependências de `package.json` não incluem nenhuma biblioteca de métricas ou tracing (derivado).
 - O CRUD de configuração fica aberto a qualquer role autenticada, mais permissivo do que o ideal ([09:37] Sofia).
-- Ponto em aberto: endurecer as roles do CRUD ficou para depois ([09:37] Sofia), e o significado exato de `WEBHOOK_SECRET_REQUIRED` foi só citado ([09:28] Bruno); ambos registrados como questão em aberto no RFC.
+- Ponto em aberto: endurecer as roles do CRUD ficou para depois ([09:37] Sofia), e o significado exato de `WEBHOOK_SECRET_REQUIRED` foi só citado ([09:28] Bruno); ver [RFC-Q-05](../RFC.md#questões-em-aberto) e [RFC-Q-11](../RFC.md#questões-em-aberto).
 
 ### Trade-off
 Ganhamos consistência, menor custo de manutenção e entrega mais rápida, ao custo de herdar as limitações dos padrões atuais, como a ausência de métricas e o modelo simples de roles.

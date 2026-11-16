@@ -48,7 +48,7 @@ O projeto já usa UUID como identificador em todos os models (`@default(uuid())`
 ### Negativas
 - A responsabilidade de deduplicar fica com o cliente; um cliente que ignore o `X-Event-Id` pode processar o mesmo evento duas vezes ([09:25] Sofia).
 - A plataforma depende de documentação e comunicação para que os clientes implementem a deduplicação ([09:26] Marcos).
-- Ponto em aberto: a reunião não definiu se o replay da dead letter ([09:18] Diego) preserva o `X-Event-Id` original, nem se um mesmo evento enviado a vários endpoints do customer compartilha o id ([09:44] Sofia); registrado como questão em aberto no RFC.
+- Ponto em aberto: a reunião não definiu se o replay da dead letter ([09:18] Diego) preserva o `X-Event-Id` original, nem se um mesmo evento enviado a vários endpoints do customer compartilha o id ([09:44] Sofia); ver [RFC-Q-09](../RFC.md#questões-em-aberto).
 
 ### Trade-off
 Ganhamos uma entrega simples, resiliente e alinhada ao mercado, ao custo de transferir ao cliente a responsabilidade de deduplicar pelo `X-Event-Id`.

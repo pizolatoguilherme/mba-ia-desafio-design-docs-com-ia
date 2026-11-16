@@ -48,7 +48,7 @@ O transporte também é tratado: a URL tem de ser https, validada no schema Zod;
 - A secret passa a ser dado sensível em banco, em respostas da API e potencialmente em logs; o `redact` do logger precisa incluí-la (derivado de [09:22] Diego).
 - Durante as 24 horas de grace há duas secrets válidas por endpoint, o que adiciona estado e lógica à configuração (derivado de [09:21] Sofia).
 - A entrega a produção depende de uma revisão de segurança dedicada ([09:46] Sofia).
-- Ponto em aberto: a assinatura cobre o corpo ([09:22] Sofia), mas o `X-Timestamp`, pensado para o cliente detectar replay attack ([09:44] Diego), não foi incluído explicitamente no conteúdo assinado; também não foi detalhado como a plataforma assina durante o grace period. Ambos seguem para a revisão de segurança ([09:46] Sofia) e estão registrados como questão em aberto no RFC.
+- Ponto em aberto: a assinatura cobre o corpo ([09:22] Sofia), mas o `X-Timestamp`, pensado para o cliente detectar replay attack ([09:44] Diego), não foi incluído explicitamente no conteúdo assinado; também não foi detalhado como a plataforma assina durante o grace period. Ambos seguem para a revisão de segurança ([09:46] Sofia) e estão em [RFC-Q-06](../RFC.md#questões-em-aberto).
 
 ### Trade-off
 Ganhamos autenticidade, integridade e isolamento de vazamentos por endpoint com um padrão que o cliente já conhece, ao custo de armazenar secrets recuperáveis, gerenciar duas secrets válidas durante a rotação e depender de revisão de segurança antes do deploy.

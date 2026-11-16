@@ -45,7 +45,7 @@ O payload é JSON enxuto, sem items: `event_id`, `event_type` `order.status_chan
 - A transação de `changeStatus`, já pesada ([09:04] Bruno), passa a ler a configuração de webhooks do customer e a montar o payload antes do commit (derivado de [09:34] Bruno).
 - Mudanças posteriores no filtro ou no cadastro não afetam eventos já enfileirados, e um webhook cadastrado depois não recebe eventos anteriores (derivado).
 - O payload fica duplicado em cada linha da outbox, o que aumenta o volume da tabela (derivado de [09:52] Larissa).
-- Ponto em aberto: a reunião não definiu se, quando o customer tem mais de um endpoint interessado ([09:44] Sofia), a outbox recebe uma linha por endpoint ou uma por evento com distribuição no worker; registrado como questão em aberto no RFC.
+- Ponto em aberto: a reunião não definiu se, quando o customer tem mais de um endpoint interessado ([09:44] Sofia), a outbox recebe uma linha por endpoint ou uma por evento com distribuição no worker; ver [RFC-Q-10](../RFC.md#questões-em-aberto).
 
 ### Trade-off
 Ganhamos fidelidade do evento ao momento da mudança e uma outbox sem linhas inúteis, ao custo de mais trabalho dentro da transação de `changeStatus` e de eventos que não refletem alterações posteriores de configuração.

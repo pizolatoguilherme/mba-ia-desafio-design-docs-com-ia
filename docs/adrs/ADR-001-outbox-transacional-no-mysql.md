@@ -60,7 +60,7 @@ Adotamos o padrão outbox no MySQL já existente ([09:08] Larissa):
 - A transação de `changeStatus`, já pesada ([09:04] Bruno), ganha mais uma escrita (e a leitura do filtro do [ADR-007](ADR-007-snapshot-e-filtro-na-insercao.md)).
 - A entrega deixa de ser imediata: passa a depender do ciclo do worker (ver [ADR-002](ADR-002-worker-separado-com-polling.md)).
 - A tabela cresce continuamente; o arquivamento das linhas entregues ficou fora do escopo desta feature ([09:08] Diego).
-- Ponto em aberto: retenção e arquivamento da outbox ("30 dias ou assim", [09:08] Diego) não têm prazo nem dono; registrado como questão em aberto no RFC.
+- Ponto em aberto: retenção e arquivamento da outbox ("30 dias ou assim", [09:08] Diego) não têm prazo nem dono; ver [RFC-Q-04](../RFC.md#questões-em-aberto).
 
 ### Trade-off
 Ganhamos consistência atômica entre mudança de status e evento sem infraestrutura nova, ao custo de acoplar a escrita do evento à transação crítica de Pedidos e de aceitar entrega assíncrona.
