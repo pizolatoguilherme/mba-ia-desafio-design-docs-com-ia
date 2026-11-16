@@ -40,8 +40,8 @@ O pacote tem PRD, RFC, FDD, 7 ADRs e um tracker de rastreabilidade. A restriçã
 | 5. FDD | `/fdd-creator` + `/design-docs-review fdd` | `docs/FDD.md` | `f145e9e` |
 | 6. PRD | `/prd-creator` + `/design-docs-review prd` | `docs/PRD.md` | `67851a9` |
 | 7. Tracker | `/tracker-builder` | `docs/TRACKER.md` | `c3c5102` |
-| 8. README | `/process-readme` | `README.md` | este commit |
-| 9. Revisão final | `/design-docs-review all` | pacote inteiro | |
+| 8. README | `/process-readme` | `README.md` | `7f80a9f` |
+| 9. Revisão final | `/design-docs-review all` | pacote inteiro | commit da revisão final |
 
 Como a interação com a IA foi organizada:
 
@@ -118,8 +118,9 @@ Cada linha vem do log de iterações do arquivo de controle da execução.
 12. **PRD (review): linguagem de produto escondendo uma condição.** "Ordem por pedido preservada" sem "enquanto houver um único processo"; a métrica de 100% contradizia o FDD corrigido; uma dependência citava uma fala que não a sustentava. *Detectado* pelo review cético. *Correção:* 9 ajustes, propagando ao PRD as correções do FDD.
 13. **Tracker: 15 IDs invisíveis.** O coletor achou 171 IDs em vez de 186, porque no FDD o ponto estava dentro do negrito (`**FDD-FLUXO-01.**`). *Detectado* pelo `--list-ids` do tracker. *Correção:* formato corrigido; tracker com 100% de cobertura.
 14. **README: prompts "limpos".** Na primeira versão deste README, dois prompts tinham perdido a formatação Markdown original, e o processo exige cópia literal. *Detectado* na auto-revisão antes do commit. *Correção:* texto restaurado e conferido por script contra os `SKILL.md`.
+15. **Revisão final: duplicação entre documentos.** Com o validador 100% verde, uma checagem cruzada por script (valores, nomes de tabelas, headers, lista negra e trechos de 9 palavras repetidos entre documentos) achou o ponto em aberto do ADR-003 copiado quase literalmente no RFC-Q-08. *Detectado* pelo script de sobreposição da revisão `all`. *Correção:* o ADR passou a ter uma linha com link para o RFC, que é dono do detalhe; os demais valores e nomes estavam idênticos em todo o pacote.
 
-**14 iterações principais** até o resultado final.
+**15 iterações principais** até o resultado final.
 
 ## Como navegar a entrega
 

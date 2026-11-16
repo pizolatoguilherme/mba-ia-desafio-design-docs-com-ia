@@ -59,7 +59,7 @@ Eventos que esgotam as tentativas precisam ficar guardados como evidência para 
 - Depois de esgotado, o evento depende de um ADMIN perceber a falha e fazer o replay; não há aviso automático ao cliente, porque o email ficou para a próxima fase ([09:37] Larissa).
 - Reentregas aumentam a chance de duplicata no cliente, coberta pelo [ADR-005](ADR-005-entrega-at-least-once-com-x-event-id.md) (derivado).
 - Duas tabelas para manter consistentes ao mover um evento da outbox para a dead letter e de volta (derivado).
-- Ponto em aberto: a reunião não deixa explícito se as 5 tentativas incluem o envio original; a soma de 1m+5m+30m+2h+12h, quase 15 horas entre a primeira falha e a última tentativa ([09:17] Diego), só fecha com 5 retentativas após a falha inicial. Ver [RFC-Q-08](../RFC.md#questões-em-aberto).
+- Ponto em aberto: a reunião não deixa explícito se as 5 tentativas incluem o envio original ([09:17] Diego); ver [RFC-Q-08](../RFC.md#questões-em-aberto).
 
 ### Trade-off
 Ganhamos resiliência a indisponibilidades de horas e um destino limpo e auditável para falhas permanentes, ao custo de entregas que podem atrasar até cerca de 15 horas e de reprocessamento manual dependente de um ADMIN.
