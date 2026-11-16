@@ -129,7 +129,7 @@ Critérios: - Um cliente com dois cadastros distingue a origem de cada aviso.
 | **PRD-NFR-06** | Segurança | Convivência das chaves antiga e nova na troca | 24 h | [09:21] Sofia |
 | **PRD-NFR-07** | Segurança | Reprocessamento só por ADMIN; configuração por qualquer usuário autenticado | perfis existentes | [09:36] Sofia, [09:37] Sofia |
 | **PRD-NFR-08** | Confiabilidade | Garantia de entrega: ao menos uma vez; repetições são possíveis | at-least-once | [09:24] Diego |
-| **PRD-NFR-09** | Confiabilidade | Tentativas automáticas antes de guardar o aviso | 5 tentativas, cerca de 15 h (contagem exata em [RFC-Q-08](RFC.md#questões-em-aberto)) | [09:17] Diego, [09:17] Larissa |
+| **PRD-NFR-09** | Confiabilidade | Tentativas automáticas antes de guardar o aviso | 5 tentativas após a falha inicial, uma por intervalo (1m/5m/30m/2h/12h), cerca de 15 h (contagem exata em [RFC-Q-08](RFC.md#questões-em-aberto)) | [09:17] Diego, [09:17] Larissa |
 | **PRD-NFR-10** | Confiabilidade | Nenhuma mudança de status sem aviso registrado, e nenhum aviso de mudança desfeita | atômico | [09:06] Diego, [09:40] Bruno |
 | **PRD-NFR-11** | Confiabilidade | Ordem dos avisos de um mesmo pedido preservada **enquanto houver um único processo de envio**; não há ordem global entre pedidos (PRD-OUT-06) | por pedido, com processo único | [09:12] Diego, [09:13] Larissa |
 | **PRD-NFR-12** | Confiabilidade | Tamanho máximo do aviso; acima disso é erro, sem cortar o conteúdo | 64 KB | [09:23] Sofia, [09:24] Larissa |

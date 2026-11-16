@@ -2,7 +2,7 @@
 
 Versão: 1.0 | Data: 2026-11-16 | Responsável: Larissa (Tech Lead) | Revisão de segurança: Sofia | Relacionados: [PRD](PRD.md), [RFC](RFC.md), [ADRs](adrs/README.md), [Tracker](TRACKER.md)
 
-> Convenções deste documento: todo valor decidido traz a fonte `[hh:mm] Nome`. Nomes de colunas, rotas, códigos de erro e parâmetros que a reunião não citou levam **(derivado)** e seguem as convenções do código existente. Propostas sobre questões em aberto levam "pendente de confirmação, ver RFC-Q-nn". As rotas abaixo ficam sob o prefixo `/api/v1`, montado em `src/app.ts`.
+> Convenções deste documento: todo valor decidido traz a fonte `[hh:mm] Nome`. Nomes de colunas, rotas, códigos de erro e parâmetros que a reunião não citou levam **(derivado)** e seguem as convenções do código existente. Propostas sobre questões em aberto levam "pendente de confirmação, ver RFC-Q-nn". As rotas abaixo ficam sob o prefixo `/api/v1`, montado em `src/app.ts`. Caminhos marcados (novo, a criar) são arquivos que a feature vai criar, nomeados na reunião ([09:11] Larissa, [09:27] Bruno, [09:28] Bruno); todos os demais caminhos citados existem no repositório.
 
 ## 1. Contexto e motivação técnica
 
@@ -239,7 +239,7 @@ sequenceDiagram
 
 ### 5.3 Retry com backoff
 
-**FDD-FLUXO-03**. A cada falha retryable, `attempts` é incrementado e `nextAttemptAt` recebe o próximo intervalo da tabela. Interpretação: o envio original mais 5 retentativas, o que fecha "quase 15 horas entre primeira falha e última tentativa" ([09:17] Diego) (pendente de confirmação, ver RFC-Q-08).
+**FDD-FLUXO-03**. A cada falha retryable, `attempts` é incrementado e `nextAttemptAt` recebe o próximo intervalo da tabela. Interpretação: as **5 tentativas** decididas ([09:17] Larissa) são as 5 retentativas após a falha inicial, uma por intervalo de 1m/5m/30m/2h/12h; com o envio original, são 6 envios, o que fecha "quase 15 horas entre primeira falha e última tentativa" ([09:17] Diego) (pendente de confirmação, ver RFC-Q-08).
 
 | Envio | Quando | Intervalo desde o envio anterior | Fonte |
 |---|---|---|---|
@@ -662,7 +662,7 @@ Arquivos existentes:
 | **FDD-INT-06** | `src/shared/errors/index.ts` | Exporta as novas classes | [09:28] Bruno |
 | **FDD-INT-07** | `src/shared/logger/index.ts` | `redactPaths` ganha os campos de secret | (derivado de [09:22] Diego) |
 | **FDD-INT-08** | `src/config/env.ts` | `envSchema` ganha os parâmetros opcionais da seção 14, com default | (derivado) |
-| **FDD-INT-09** | `package.json` | Scripts `worker` (`node --env-file=.env dist/worker.js`) e `worker:dev` (`tsx watch --env-file=.env src/worker.ts`, arquivo novo, a criar); nenhuma dependência nova | [09:11] Larissa, [09:29] Bruno |
+| **FDD-INT-09** | `package.json` | Scripts `worker`, no mesmo padrão do script `start` (código compilado), e `worker:dev`, no padrão do script `dev`, ambos para a entry `src/worker.ts` (novo, a criar); nenhuma dependência nova | [09:11] Larissa, [09:29] Bruno |
 | **FDD-INT-10** | `tests/setup.ts` | `beforeEach` apaga `webhookDelivery`, `webhookDeadLetter`, `webhookOutbox` e `webhookEndpoint` antes de `customer` | (derivado do padrão do arquivo) |
 | **FDD-INT-11** | `src/middlewares/auth.middleware.ts` | Reutilizado sem mudança: `authenticate` no CRUD, `requireRole('ADMIN')` no replay | [09:36] Larissa |
 | **FDD-INT-12** | `src/middlewares/error.middleware.ts` | Reutilizado sem mudança | [09:29] Bruno |
