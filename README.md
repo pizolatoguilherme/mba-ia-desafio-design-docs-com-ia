@@ -122,7 +122,9 @@ Cada linha vem do log de iterações do arquivo de controle da execução.
 
 16. **Validação pré-entrega: o próprio README impreciso.** Com o validador verde (131 checagens) e uma amostragem de 18 linhas do tracker confrontadas com a fala citada (todas sustentadas), a leitura do README achou duas afirmações falsas sobre o processo: o modelo aparecia como usado só "da etapa de ADRs em diante", embora tenha sido o mesmo desde o setup, e a iteração 8 dizia "leitura humana" para um achado da IA numa validação pedida por mim. *Detectado* na validação de progresso antes do merge. *Correção:* as duas frases foram reescritas conforme o que aconteceu. Lição: o README também é documento rastreável, e a fonte dele é o log de execução.
 
-**16 iterações principais** até o resultado final.
+17. **Validação contra o enunciado: exemplos de request faltando.** Uma checagem independente do validador do projeto, contrato por contrato, mostrou que só 2 dos 8 contratos do FDD (POST e PATCH) tinham exemplo de requisição; os endpoints sem corpo e o webhook de saída mostravam só a resposta, ou só o corpo enviado. O validador contava blocos JSON na seção inteira (16), não por endpoint. A mesma checagem achou o inventário citando `src/worker.ts` sem o rótulo "(novo, a criar)". *Detectado* na validação final contra o enunciado e o plano. *Correção:* exemplo de requisição HTTP em todos os contratos, mais a resposta 204 do DELETE e a resposta do cliente no webhook de saída, reaproveitando só valores que o FDD já definia (alinhado o `X-Timestamp` com o horário da tentativa no histórico); rótulo aplicado no inventário. Lição: "passou no validador" mede o que o validador sabe medir; o critério do enunciado precisa ser checado na granularidade dele (por endpoint).
+
+**17 iterações principais** até o resultado final.
 
 ## Como navegar a entrega
 
