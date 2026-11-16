@@ -133,7 +133,7 @@ Probabilidade e impacto são avaliação desta RFC (derivado); as mitigações c
 | **RFC-RISK-02** | Worker único parado ou retido por clientes lentos acumula eventos e estoura os 10 segundos | Média | Médio | Processo separado da API ([09:11] Diego); timeout de 10 segundos por chamada ([09:42] Diego); eventos não se perdem enquanto estão na outbox ([09:06] Diego) |
 | **RFC-RISK-03** | Cliente não deduplica e processa o mesmo evento duas vezes ([09:25] Sofia) | Média | Médio | `X-Event-Id` estável por evento e documentação em destaque no portal ([09:26] Marcos) |
 | **RFC-RISK-04** | Vazamento de secret pelo cliente, como já ocorreu ([09:22] Diego) | Média | Alto | Secret por endpoint, rotação com 24h de convivência ([09:21] Sofia) e revisão de segurança antes do deploy ([09:46] Sofia) |
-| **RFC-RISK-05** | Rajada de eventos para um mesmo cliente sem limite de envio ([09:38] Diego) | Baixa | Médio | Observar em produção e decidir depois ([09:39] Larissa); ver RFC-Q-02 |
+| **RFC-RISK-05** | Rajada de eventos para um mesmo cliente sem limite de envio ([09:38] Diego) | Baixa | Médio | "Observar e decidir depois" ([09:39] Larissa); ver RFC-Q-02 |
 | **RFC-RISK-06** | Crescimento contínuo da outbox sem política de retenção | Alta | Baixo | Índices em status e `created_at` ([09:08] Diego); retenção em RFC-Q-04 |
 | **RFC-RISK-07** | Prazo da Atlas (fim de novembro) contra a estimativa de três sprints com revisão de segurança | Média | Alto | Estimativa por bloco ([09:46] Larissa); Marcos confirma o prazo com a Atlas ([09:47] Marcos) |
 
