@@ -12,7 +12,7 @@ O pacote tem PRD, RFC, FDD, 7 ADRs e um tracker de rastreabilidade. A restriçã
 
 | Ferramenta | Papel |
 |---|---|
-| **Claude Code** (extensão do VS Code), com o modelo **Claude Opus 5.5** (`claude-opus-5-5`) da etapa de ADRs em diante | Leitura do código e da transcrição, geração de todos os documentos, revisões e execução do validador |
+| **Claude Code** (extensão do VS Code), com o modelo **Claude Opus 5.5** (`claude-opus-5-5`) em todas as etapas | Leitura do código e da transcrição, geração de todos os documentos, revisões e execução do validador |
 | Skill `product-manager` (devfullcycle/mba-ia-dev-workflow) | Base do `/prd-creator`: formato de requisito com MoSCoW e critério testável, categorias de NFR |
 | Skill `fdd-creator` (devfullcycle/mba-ia-dev-workflow) | Base do `/fdd-creator`: roteiro de seções do FDD |
 | Skill `hld-creator` (devfullcycle/mba-ia-dev-workflow) | Base do `/rfc-creator`: componentes, fluxo em alto nível, riscos e ADRs associados |
@@ -111,7 +111,7 @@ Cada linha vem do log de iterações do arquivo de controle da execução.
 5. **ADRs (review): validador 100% verde, mas com alucinações.** Uma invenção ("trocar a secret sem perder eventos", quando a Sofia só disse "tempo de migrar"), uma alternativa nunca discutida apresentada como real, derivações sem rótulo, 6 arquivos citados num ADR com limite de 5 e uma decisora que tinha questionado a decisão. *Detectado* pelo review cético. *Correção:* 9 ajustes com a fala literal e o rótulo (derivado).
 6. **RFC (geração): tamanho e links.** Cerca de 2.325 palavras, acima do teto de 2.200, e ADRs apontando para "questão em aberto no RFC" sem número. *Detectado* pelo validador e na revisão dos links. *Correção:* texto enxugado; cada ponto em aberto dos ADRs passou a linkar seu `RFC-Q`.
 7. **RFC (review): detalhes "óbvios" sem fonte.** Método POST no diagrama, prazo "confirmado" com a Atlas (Marcos disse que *vai* confirmar), "observar em produção", questões em aberto sem dono. *Detectado* pelo review cético. *Correção:* 9 ajustes, incluindo a coluna "Responsável / prazo" com "Não definido" explícito.
-8. **Resíduo de correção.** O "em produção" removido na iteração 7 sobreviveu na mitigação do RFC-RISK-05. *Detectado* por leitura humana. *Correção:* fala literal "observar e decidir depois" e a regra de fazer `grep` do termo removido em todo o `docs/` após cada correção.
+8. **Resíduo de correção.** O "em produção" removido na iteração 7 sobreviveu na mitigação do RFC-RISK-05. *Detectado* numa validação de progresso que pedi entre as etapas: a IA releu o RFC confrontando cada fala com a transcrição. *Correção:* fala literal "observar e decidir depois" e a regra de fazer `grep` do termo removido em todo o `docs/` após cada correção.
 9. **FDD (geração): o código contrariou o óbvio.** `NotFoundError` e `ValidationError` fixam o código de erro, a garantia de ordem por pedido quebra com retry e checar 64KB na inserção derrubaria a mudança de status. *Detectado* pela leitura obrigatória do código antes de escrever. *Correção:* classes e local de validação ajustados; sete escolhas derivadas levadas ao checkpoint humano.
 10. **FDD (review): contradição interna e testes inexecutáveis.** O objetivo prometia "nenhum evento descartado", mas o DELETE apagava pendentes. Além disso, `vi.spyOn` não funciona em export ESM, e o timeout não pode vir do `env`, que é lido uma vez. *Detectado* pelo review cético. *Correção:* exceção explícita, `vi.mock` e configuração por parâmetro.
 11. **PRD (geração): o mesmo acréscimo de novo.** Um critério dizia "em produção" sem fonte. *Detectado* pelo `grep` da iteração 8, antes do review. *Correção:* texto reescrito.
@@ -120,7 +120,9 @@ Cada linha vem do log de iterações do arquivo de controle da execução.
 14. **README: prompts "limpos".** Na primeira versão deste README, dois prompts tinham perdido a formatação Markdown original, e o processo exige cópia literal. *Detectado* na auto-revisão antes do commit. *Correção:* texto restaurado e conferido por script contra os `SKILL.md`.
 15. **Revisão final: duplicação entre documentos.** Com o validador 100% verde, uma checagem cruzada por script (valores, nomes de tabelas, headers, lista negra e trechos de 9 palavras repetidos entre documentos) achou o ponto em aberto do ADR-003 copiado quase literalmente no RFC-Q-08. *Detectado* pelo script de sobreposição da revisão `all`. *Correção:* o ADR passou a ter uma linha com link para o RFC, que é dono do detalhe; os demais valores e nomes estavam idênticos em todo o pacote.
 
-**15 iterações principais** até o resultado final.
+16. **Validação pré-entrega: o próprio README impreciso.** Com o validador verde (131 checagens) e uma amostragem de 18 linhas do tracker confrontadas com a fala citada (todas sustentadas), a leitura do README achou duas afirmações falsas sobre o processo: o modelo aparecia como usado só "da etapa de ADRs em diante", embora tenha sido o mesmo desde o setup, e a iteração 8 dizia "leitura humana" para um achado da IA numa validação pedida por mim. *Detectado* na validação de progresso antes do merge. *Correção:* as duas frases foram reescritas conforme o que aconteceu. Lição: o README também é documento rastreável, e a fonte dele é o log de execução.
+
+**16 iterações principais** até o resultado final.
 
 ## Como navegar a entrega
 
